@@ -1,13 +1,9 @@
 import { useFormik } from "formik";
 import PropTypes from "prop-types";
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BaseDiv } from "src/components/Base/Grid";
 import InputsRow from "src/components/Form";
-import { Form } from "src/components/Form/Inputs";
 import SubmitButtons from "src/components/Form/SubmitButtons";
-import Table from "src/components/Table";
-import Typography from "src/components/Typography";
 import { allValidatorsGenerator, initialValuesGenerator } from "./functions";
 
 const ControlledForm = React.memo(
@@ -79,56 +75,30 @@ const ControlledForm = React.memo(
     });
 
     return (
-      <Form>
-        {withTable ? (
-          <Fragment>
-            <Table
-              data={data}
-              columns={inputs({})?.filter((input) => !input.hideInTable)}
-              onView={onView(formik)}
-              onEdit={!withoutEdit ? onEdit(formik) : undefined}
-              onDelete={!withoutDelete ? onDelete : undefined}
-              detailsPanel={detailsPanel}
-            />
-
-            <InputsRow
-              formik={formik}
-              inputs={inputs({ formik })
-                .filter(({ excludeInForm }) => !excludeInForm)
-                .map(({ hideInTable, ...rest }) => ({ ...rest }))
-                .map(({ disabled, ...input }) => ({
-                  ...input,
-                  disabled: disableForm || disabled,
-                }))}
-            />
-          </Fragment>
-        ) : (
-          <InputsRow
-            formik={formik}
-            inputs={inputs({ formik })
-              .filter(({ excludeInForm }) => !excludeInForm)
-              .map(({ hideInTable, ...rest }) => ({ ...rest }))
-              .map((input) =>
-                action === "delete" || action === "view"
-                  ? { ...input, required: false }
-                  : { ...input }
-              )
-              .map(({ disabled, ...input }) => ({
-                ...input,
-                disabled: disableForm || disabled,
-              }))}
-          />
-        )}
+      <form>
+        <InputsRow
+          formik={formik}
+          inputs={inputs({ formik })
+            .filter(({ excludeInForm }) => !excludeInForm)
+            .map(({ hideInTable, ...rest }) => ({ ...rest }))
+            .map((input) =>
+              action === "delete" || action === "view"
+                ? { ...input, required: false }
+                : { ...input }
+            )
+            .map(({ disabled, ...input }) => ({
+              ...input,
+              disabled: disableForm || disabled,
+            }))}
+        />
 
         {thereAreErrors && (
-          <BaseDiv>
-            <Typography size="sm" className="text-danger">
-              {t("ThereAreErrors")}
-            </Typography>
-          </BaseDiv>
+          <div>
+            <small className="text-danger">{t("ThereAreErrors")}</small>
+          </div>
         )}
 
-        <BaseDiv>
+        <div>
           <SubmitButtons
             fullWidth={fullWidth}
             submitText={submitText}
@@ -142,8 +112,8 @@ const ControlledForm = React.memo(
               !noReset ? () => formik.resetForm({ values: {} }) : undefined
             }
           />
-        </BaseDiv>
-      </Form>
+        </div>
+      </form>
     );
   }
 );
